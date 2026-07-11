@@ -3,9 +3,10 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useSocket } from '../context/SocketContext';
 import { useTheme } from '../context/ThemeContext';
-import { TrendingUp, Wallet, LayoutDashboard, Briefcase, RefreshCw, Star, LogOut, Sun, Moon, ClipboardList, History, Plus } from 'lucide-react';
+import { Wallet, LayoutDashboard, Briefcase, RefreshCw, Star, LogOut, Sun, Moon, ClipboardList, History, Plus } from 'lucide-react';
 import { formatINR } from '../utils/format';
 import AddFundsModal from './AddFundsModal';
+import logo from '../assets/logo.svg';
 
 const Navbar: React.FC = () => {
   const { user, logout } = useAuth();
@@ -46,9 +47,7 @@ const Navbar: React.FC = () => {
         {/* Brand Logo & Mobile controls row */}
         <div className="flex items-center justify-between w-full md:w-auto">
           <div className="flex items-center gap-2 cursor-pointer shrink-0" onClick={() => navigate('/dashboard')}>
-            <div className="bg-gradient-to-tr from-emerald-500 to-teal-400 p-1.5 md:p-2 rounded-lg md:rounded-xl text-[#0b0f19]">
-              <TrendingUp size={18} className="animate-pulse" />
-            </div>
+            <img src={logo} alt="TradeSim Logo" className="w-7 h-7 md:w-8 md:h-8 object-contain shrink-0" />
             <span className="text-lg md:text-xl font-black tracking-tight text-[var(--color-text-primary)]">
               Trade<span className="text-emerald-500 dark:text-emerald-400 font-black">Sim</span>
             </span>
