@@ -12,6 +12,7 @@ import stockRoutes from './routes/stocks.js';
 import ordersRoutes from './routes/orders.js';
 import watchlistRoutes from './routes/watchlist.js';
 import dashboardRoutes from './routes/dashboard.js';
+import walletRoutes from './routes/wallet.js';
 import { errorHandler, notFoundHandler } from './middleware/errorMiddleware.js';
 
 // Initialize Passport & Firebase Admin configs
@@ -58,6 +59,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/stocks', stockRoutes);
 app.use('/api', ordersRoutes);
 app.use('/api/watchlist', watchlistRoutes);
+app.use('/api/wallet', walletRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 
 // 404 handler for unmatched routes

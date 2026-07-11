@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowLeftRight, ArrowDownLeft, ArrowUpRight, Loader2 } from 'lucide-react';
+import { ArrowLeftRight, ArrowDownLeft, ArrowUpRight, Loader2, Wallet } from 'lucide-react';
 import api from '../services/api';
 import { formatINR } from '../utils/format';
 
 interface Transaction {
   _id: string;
   symbol: string;
-  type: 'BUY' | 'SELL';
+  type: 'BUY' | 'SELL' | 'DEPOSIT';
   shares: number;
   price: number;
   total: number;
@@ -90,20 +90,32 @@ const Transactions: React.FC = () => {
                   <tr key={tx._id} className="hover:bg-slate-200/30 dark:hover:bg-slate-800/20 transition-colors duration-150">
                     <td className="px-6 py-4 text-[var(--color-text-secondary)] font-mono text-xs font-semibold">{formattedDate}</td>
                     <td className="px-6 py-4">
-                      <Link to={`/stock/${tx.symbol}`} className="text-[var(--color-text-primary)] font-extrabold text-base tracking-wide hover:underline hover:text-emerald-500 transition-colors duration-200">{tx.symbol}</Link>
+                      {tx.type === 'DEPOSIT' ? (
+                        <span className="text-[var(--color-text-primary)] font-extrabold text-base tracking-wide uppercase">{tx.symbol}</span>
+                      ) : (
+                        <Link to={`/stock/${tx.symbol}`} className="text-[var(--color-text-primary)] font-extrabold text-base tracking-wide hover:underline hover:text-emerald-500 transition-colors duration-200">{tx.symbol}</Link>
+                      )}
                     </td>
                     <td className="px-6 py-4">
                       <span className={`inline-flex items-center gap-1 text-xs font-bold uppercase tracking-wider px-2.5 py-1 rounded-lg ${
-                        isBuy 
-                          ? 'bg-emerald-500/10 text-emerald-550 dark:text-emerald-400' 
+                        tx.type === 'DEPOSIT'
+                          ? 'bg-indigo-500/10 text-indigo-500 dark:text-indigo-400'
+                          : isBuy
+                          ? 'bg-emerald-500/10 text-emerald-550 dark:text-emerald-400'
                           : 'bg-rose-500/10 text-rose-550 dark:text-rose-400'
                       }`}>
-                        {isBuy ? <ArrowDownLeft size={12} /> : <ArrowUpRight size={12} />}
+                        {tx.type === 'DEPOSIT' ? (
+                          <Wallet size={12} />
+                        ) : isBuy ? (
+                          <ArrowDownLeft size={12} />
+                        ) : (
+                          <ArrowUpRight size={12} />
+                        )}
                         {tx.type}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-right text-[var(--color-text-primary)] font-mono">{tx.shares}</td>
-                    <td className="px-6 py-4 text-right text-[var(--color-text-secondary)] font-mono">{formatINR(tx.price)}</td>
+                    <td className="px-6 py-4 text-right text-[var(--color-text-primary)] font-mono">{tx.type === 'DEPOSIT' ? '-' : tx.shares}</td>
+                    <td className="px-6 py-4 text-right text-[var(--color-text-secondary)] font-mono">{tx.type === 'DEPOSIT' ? '-' : formatINR(tx.price)}</td>
                     <td className="px-6 py-4 text-right text-[var(--color-text-primary)] font-mono font-bold">{formatINR(tx.total)}</td>
                   </tr>
                 );
