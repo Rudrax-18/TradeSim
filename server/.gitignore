@@ -1,0 +1,22 @@
+# Environment variables
+.env
+.env.local
+
+# Firebase service account key
+firebase-service-account.json
+*firebase-adminsdk*.json
+
+# Dependencies
+node_modules/
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Build output
+dist/
+build/
