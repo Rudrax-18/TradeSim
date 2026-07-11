@@ -28,8 +28,8 @@ const generateRefreshToken = (user) => {
 const setRefreshTokenCookie = (res, token) => {
   res.cookie('refreshToken', token, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production', // true in production
-    sameSite: 'lax',
+    secure: true, // required for sameSite: 'none'
+    sameSite: 'none',
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days in ms
   });
 };
@@ -175,11 +175,10 @@ export const refresh = async (req, res, next) => {
  */
 export const logout = async (req, res, next) => {
   try {
-    // Clear cookie
     res.clearCookie('refreshToken', {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
+      secure: true,
+      sameSite: 'none',
     });
 
     return res.json({ message: 'Logged out successfully' });
