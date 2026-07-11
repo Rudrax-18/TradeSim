@@ -71,6 +71,7 @@ export const register = async (req, res, next) => {
           watchlist: user.watchlist,
         },
         accessToken,
+        refreshToken,
       });
     } else {
       return res.status(400).json({ message: 'Invalid user data' });
@@ -117,6 +118,7 @@ export const login = async (req, res, next) => {
         watchlist: user.watchlist,
       },
       accessToken,
+      refreshToken,
     });
   } catch (error) {
     next(error);
@@ -128,7 +130,7 @@ export const login = async (req, res, next) => {
  * Route: POST /api/auth/refresh
  */
 export const refresh = async (req, res, next) => {
-  const refreshToken = req.cookies.refreshToken;
+  const refreshToken = req.cookies.refreshToken || req.body.refreshToken || req.headers['x-refresh-token'];
 
   if (!refreshToken) {
     return res.status(401).json({ message: 'Refresh token not found' });
@@ -155,6 +157,7 @@ export const refresh = async (req, res, next) => {
 
     return res.json({
       accessToken: newAccessToken,
+      refreshToken: newRefreshToken,
       user: {
         id: user._id,
         name: user.name,
@@ -233,7 +236,7 @@ export const googleCallback = async (req, res, next) => {
     await migrateWatchlist(user);
 
     const clientUrl = process.env.CLIENT_URL || 'http://localhost:5173';
-    return res.redirect(`${clientUrl}/login?token=${accessToken}`);
+    return res.redirect(`${clientUrl}/login?token=${accessToken}&refreshToken=${refreshToken}`);
   } catch (error) {
     next(error);
   }
@@ -282,6 +285,7 @@ export const phoneVerify = async (req, res, next) => {
         watchlist: user.watchlist,
       },
       accessToken,
+      refreshToken,
     });
   } catch (error) {
     console.error('Phone token verification error:', error.message);

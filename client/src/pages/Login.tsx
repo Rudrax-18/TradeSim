@@ -26,13 +26,14 @@ const Login: React.FC = () => {
   // Sync token from Google OAuth redirect parameter
   useEffect(() => {
     const token = searchParams.get('token');
+    const refreshToken = searchParams.get('refreshToken');
     const oauthError = searchParams.get('error');
     if (oauthError) {
       setError(oauthError);
     }
     if (token) {
       setLoading(true);
-      loginWithToken(token)
+      loginWithToken(token, refreshToken || undefined)
         .then(() => navigate('/dashboard'))
         .catch((err) => {
           console.error(err);

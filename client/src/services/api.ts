@@ -77,14 +77,20 @@ api.interceptors.response.use(
 
       try {
         // Call refresh endpoint
+        const clientRefreshToken = localStorage.getItem('refreshToken');
         const response = await axios.post(
           `${API_URL}/api/auth/refresh`,
-          {},
+          { refreshToken: clientRefreshToken },
           { withCredentials: true }
         );
 
         const newAccessToken = response.data.accessToken;
+        const newRefreshToken = response.data.refreshToken;
+        
         setAccessToken(newAccessToken);
+        if (newRefreshToken) {
+          localStorage.setItem('refreshToken', newRefreshToken);
+        }
         
         isRefreshing = false;
         onRefreshed(newAccessToken);
@@ -95,6 +101,7 @@ api.interceptors.response.use(
       } catch (refreshError) {
         isRefreshing = false;
         setAccessToken('');
+        localStorage.removeItem('refreshToken');
         // Let the application know the session expired
         window.dispatchEvent(new Event('auth-session-expired'));
         return Promise.reject(refreshError);

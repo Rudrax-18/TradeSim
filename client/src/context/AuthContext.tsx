@@ -16,7 +16,7 @@ interface AuthContextType {
   isLoading: boolean;
   login: (email: string, password: string) => Promise<void>;
   register: (name: string, email: string, password: string) => Promise<void>;
-  loginWithToken: (token: string) => Promise<void>;
+  loginWithToken: (token: string, refreshToken?: string) => Promise<void>;
   logout: () => Promise<void>;
   updateUser: (user: User) => void;
 }
@@ -37,14 +37,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Perform silent refresh on app load
   useEffect(() => {
     const silentRefresh = async () => {
+      const storedRefreshToken = localStorage.getItem('refreshToken');
       try {
-        const response = await api.post('/api/auth/refresh');
-        const { accessToken, user: userData } = response.data;
+        const response = await api.post('/api/auth/refresh', { refreshToken: storedRefreshToken });
+        const { accessToken, refreshToken: newRefreshToken, user: userData } = response.data;
         updateToken(accessToken);
+        if (newRefreshToken) {
+          localStorage.setItem('refreshToken', newRefreshToken);
+        }
         setUser(userData);
       } catch (err) {
-        // Safe to ignore on boot, means no refresh cookie exists
+        // Safe to ignore on boot, means no refresh cookie/token exists
         console.log('No active session found on load.');
+        localStorage.removeItem('refreshToken');
       } finally {
         setIsLoading(false);
       }
@@ -56,6 +61,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const handleSessionExpired = () => {
       setUser(null);
       updateToken(null);
+      localStorage.removeItem('refreshToken');
     };
 
     window.addEventListener('auth-session-expired', handleSessionExpired);
@@ -68,8 +74,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setIsLoading(true);
     try {
       const response = await api.post('/api/auth/login', { email, password });
-      const { accessToken, user: userData } = response.data;
+      const { accessToken, refreshToken, user: userData } = response.data;
       updateToken(accessToken);
+      if (refreshToken) {
+        localStorage.setItem('refreshToken', refreshToken);
+      }
       setUser(userData);
     } catch (error) {
       throw error;
@@ -82,8 +91,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setIsLoading(true);
     try {
       const response = await api.post('/api/auth/register', { name, email, password });
-      const { accessToken, user: userData } = response.data;
+      const { accessToken, refreshToken, user: userData } = response.data;
       updateToken(accessToken);
+      if (refreshToken) {
+        localStorage.setItem('refreshToken', refreshToken);
+      }
       setUser(userData);
     } catch (error) {
       throw error;
@@ -92,15 +104,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const loginWithToken = async (accessToken: string) => {
+  const loginWithToken = async (accessToken: string, refreshToken?: string) => {
     setIsLoading(true);
     try {
       updateToken(accessToken);
+      if (refreshToken) {
+        localStorage.setItem('refreshToken', refreshToken);
+      }
       const response = await api.get('/api/auth/me');
       setUser(response.data.user);
     } catch (error) {
       updateToken(null);
       setUser(null);
+      localStorage.removeItem('refreshToken');
       throw error;
     } finally {
       setIsLoading(false);
@@ -116,6 +132,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     } finally {
       updateToken(null);
       setUser(null);
+      localStorage.removeItem('refreshToken');
       setIsLoading(false);
     }
   };
