@@ -1,0 +1,25 @@
+<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#10b981;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#059669;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Rounded square background -->
+  <rect x="10" y="10" width="180" height="180" rx="40" fill="url(#bgGradient)" />
+
+  <!-- Trending up arrow with candlestick-inspired bars -->
+  <g stroke="#ffffff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <polyline points="50,135 85,100 110,120 150,65" />
+    <polyline points="122,65 150,65 150,93" />
+  </g>
+
+  <!-- Small candlestick bars beneath the arrow for a "trading" motif -->
+  <g fill="#ffffff" opacity="0.85">
+    <rect x="46" y="142" width="8" height="18" rx="2" />
+    <rect x="81" y="128" width="8" height="32" rx="2" />
+    <rect x="106" y="134" width="8" height="26" rx="2" />
+    <rect x="141" y="118" width="8" height="42" rx="2" />
+  </g>
+</svg>
