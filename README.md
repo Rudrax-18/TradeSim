@@ -1,3 +1,10 @@
+<div align="center">
+  <img src="./tradesim-logo.svg" alt="TradeSim Logo" width="100" />
+  
+  # TradeSim 📈
+  
+  A full-stack paper trading platform for the Indian stock market (NSE)
+</div>
 # TradeSim 📈
 
 A full-stack **paper trading platform** for the Indian stock market (NSE), built with the MERN stack. Practice trading real, live-priced stocks in ₹ (INR) without risking real money.
